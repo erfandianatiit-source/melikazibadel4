@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>آکادمی ملیکا زیبادل</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- ===== ولکام (خوش‌آمدگویی) ===== -->
+    <div id="welcomePopup" class="welcome-popup">
+        <div class="welcome-content">
+            <div class="welcome-icon">👑</div>
+            <h1>به آکادمی ملیکا زیبادل خوش آمدید</h1>
+            <p>زیبایی را با هنر و علم تجربه کنید</p>
+            <p style="font-size:0.9rem;color:#999;margin-top:0.5rem;">تخصص در آرایش عروس، شینیون، میکاپ و آموزش</p>
+            <button onclick="closeWelcome()" class="btn-primary" style="border:none;cursor:pointer;">ورود به سایت</button>
+        </div>
+    </div>
+
+    <!-- ===== هدر ===== -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <h1>💄 ملیکا زیبادل</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">خانه</a></li>
+                <li><a href="#services">خدمات</a></li>
+                <li><a href="#gallery">گالری</a></li>
+                <li><a href="#about">درباره ما</a></li>
+                <li><a href="#contact">تماس</a></li>
+                <li><a href="#" id="loginBtn" class="btn-login"><i class="fas fa-user"></i> ورود</a></li>
+                <li><a href="admin.html" class="btn-login" style="background:#FFD700;color:#1a0a1a;">👑 پنل ادمین</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== محتوای اصلی ===== -->
+    <main>
+
+        <!-- ===== صفحه اصلی (هیرو) ===== -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1 class="glow-text">به آکادمی ملیکا زیبادل خوش آمدید</h1>
+                <p class="subtitle">زیبایی را با هنر و علم تجربه کنید</p>
+                <div class="hero-buttons">
+                    <a href="#services" class="btn-primary">مشاهده خدمات</a>
+                    <a href="#contact" class="btn-secondary">تماس بگیرید</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="floating-shapes">
+                    <div class="shape shape1">👑</div>
+                    <div class="shape shape2">💄</div>
+                    <div class="shape shape3">✨</div>
+                    <div class="shape shape4">💅</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== خدمات ===== -->
+        <section id="services" class="services">
+            <h2 class="section-title">خدمات ما</h2>
+            <div class="services-grid" id="servicesGrid"></div>
+        </section>
+
+        <!-- ===== گالری شینیون ===== -->
+        <section id="gallery" class="gallery">
+            <h2 class="section-title">گالری شینیون</h2>
+            <div class="gallery-grid" id="galleryGrid"></div>
+        </section>
+
+        <!-- ===== درباره ما ===== -->
+        <section id="about" class="about">
+            <div class="about-content">
+                <h2>درباره آکادمی ملیکا زیبادل</h2>
+                <p>ما با بیش از ۱۰ سال تجربه در زمینه زیبایی و آرایش، بهترین خدمات را با بالاترین کیفیت به شما عزیزان ارائه می‌دهیم.</p>
+                <div class="stats">
+                    <div class="stat"><span class="number" data-count="1000">0</span><span class="label">مشتری راضی</span></div>
+                    <div class="stat"><span class="number" data-count="50">0</span><span class="label">خدمت حرفه‌ای</span></div>
+                    <div class="stat"><span class="number" data-count="25">0</span><span class="label">متخصص مجرب</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== تماس با ما ===== -->
+        <section id="contact" class="contact">
+            <h2>تماس با ما</h2>
+            <div class="contact-container">
+                <form class="contact-form" id="contactForm">
+                    <input type="text" placeholder="نام و نام خانوادگی" id="fullName" required />
+                    <input type="tel" placeholder="شماره تماس" id="phoneNumber" required />
+                    <select id="serviceSelect" required>
+                        <option value="">انتخاب خدمت</option>
+                        <option value="آرایش عروس">آرایش عروس</option>
+                        <option value="آرایش مجالس">آرایش مجالس</option>
+                        <option value="میکاپ روز">میکاپ روز</option>
+                        <option value="آموزش آرایش">آموزش آرایش</option>
+                        <option value="شینیون">شینیون</option>
+                    </select>
+                    <textarea placeholder="پیام شما..." id="messageText"></textarea>
+                    <button type="submit" class="btn-primary">ارسال پیام</button>
+                </form>
+                <div class="contact-info">
+                    <div><i class="fas fa-map-marker-alt"></i> رشت، صومعه‌سرا، فومن</div>
+                    <div><i class="fas fa-phone"></i> ۰۹۳۶۰۸۰۰۳۶۲</div>
+                    <div><i class="fas fa-envelope"></i> info@melikazibadl.com</div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== مودال ورود/رزرو ===== -->
+    <div id="loginModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>🔐 ورود به حساب کاربری</h2>
+            
+            <!-- اطلاعات اضافی برای رزرو -->
+            <div id="extraReservationInfo"></div>
+            
+            <form id="loginForm">
+                <input type="text" placeholder="شماره موبایل" id="phoneInput" required />
+                <input type="text" placeholder="کد تایید (1234)" id="codeInput" required />
+                <button type="submit" class="btn-primary" style="border:none;cursor:pointer;">ثبت درخواست</button>
+            </form>
+            <div id="userInfo" style="display:none;margin-top:1rem;padding:1rem;background:#faf0f5;border-radius:10px;">
+                <h3>✅ اطلاعات کاربر</h3>
+                <p>شماره: <span id="userPhone"></span></p>
+                <p>تعداد مراجعه: <span id="visitCount">0</span></p>
+                <p>تخفیف: <span id="discountPercent">0%</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== دکمه بازگشت به بالا ===== -->
+    <button id="backToTop" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- ===== اسکریپت ===== -->
+    <script src="script.js"></script>
+</body>
+</html>
