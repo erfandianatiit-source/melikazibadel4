@@ -1,9 +1,82 @@
-// ===== اطلاعات ورود =====
+// ===== اطلاعات ورود ادمین =====
 const ADMIN_USER = 'melika';
 const ADMIN_PASS = '137613';
 
-// ===== ورود =====
+// ===== دیتابیس محلی برای رسانه =====
+let mediaDB = null;
+
+// ===== راه‌اندازی IndexedDB =====
+function initMediaDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('MelikaMediaDB', 1);
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('media')) {
+                const store = db.createObjectStore('media', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('type', 'type', { unique: false });
+                store.createIndex('date', 'date', { unique: false });
+            }
+        };
+        request.onsuccess = function(event) {
+            mediaDB = event.target.result;
+            resolve(mediaDB);
+        };
+        request.onerror = function(event) {
+            reject(event.target.error);
+        };
+    });
+}
+
+// ===== ذخیره رسانه =====
+function saveMediaToDB(file, type, title) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const data = event.target.result;
+            const transaction = mediaDB.transaction(['media'], 'readwrite');
+            const store = transaction.objectStore('media');
+            const mediaItem = {
+                title: title || file.name,
+                type: type,
+                filename: file.name,
+                data: data,
+                size: file.size,
+                date: new Date().toISOString()
+            };
+            const request = store.add(mediaItem);
+            request.onsuccess = function() { resolve(request.result); };
+            request.onerror = function() { reject(request.error); };
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// ===== دریافت همه رسانه‌ها =====
+function getAllMedia() {
+    return new Promise((resolve, reject) => {
+        const transaction = mediaDB.transaction(['media'], 'readonly');
+        const store = transaction.objectStore('media');
+        const request = store.getAll();
+        request.onsuccess = function() { resolve(request.result); };
+        request.onerror = function() { reject(request.error); };
+    });
+}
+
+// ===== حذف رسانه =====
+function deleteMediaFromDB(id) {
+    return new Promise((resolve, reject) => {
+        const transaction = mediaDB.transaction(['media'], 'readwrite');
+        const store = transaction.objectStore('media');
+        const request = store.delete(id);
+        request.onsuccess = function() { resolve(); };
+        request.onerror = function() { reject(request.error); };
+    });
+}
+
+// ===== ورود ادمین =====
 document.addEventListener('DOMContentLoaded', function() {
+    initMediaDB().catch(console.error);
+    
     const loginForm = document.getElementById('adminLoginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -57,6 +130,11 @@ function renderPage(tab) {
         case 'media': title.textContent = '🎬 رسانه'; content.innerHTML = renderMedia(); break;
         case 'discounts': title.textContent = '🎯 تخفیف‌ها'; content.innerHTML = renderDiscounts(); break;
         default: content.innerHTML = '<h2>صفحه پیدا نشد!</h2>';
+    }
+    
+    // اگر برگه رسانه هست، گالری رو بارگذاری کن
+    if (tab === 'media') {
+        setTimeout(loadMediaGallery, 500);
     }
 }
 
@@ -184,10 +262,124 @@ function renderMedia() {
         <div class="media-gallery">
             <h3 style="margin:2rem 0 1rem;">🖼️ گالری رسانه</h3>
             <div id="mediaGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem;">
-                <p style="color:#888;grid-column:1/-1;">هنوز هیچ رسانه‌ای آپلود نشده است.</p>
+                <p style="color:#888;grid-column:1/-1;">در حال بارگذاری...</p>
             </div>
         </div>
     `;
+}
+
+// ===== راه‌اندازی آپلود =====
+function setupUploadHandlers() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    if (!dropZone || !fileInput) return;
+    
+    dropZone.addEventListener('click', function(e) {
+        if (e.target === dropZone || e.target.closest('.upload-icon') || e.target.closest('p')) {
+            fileInput.click();
+        }
+    });
+    
+    fileInput.addEventListener('change', function(e) {
+        if (this.files.length > 0) handleFiles(this.files);
+    });
+    
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+    
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+    
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+    });
+}
+
+// ===== پردازش فایل‌ها =====
+async function handleFiles(files) {
+    const progressDiv = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    progressDiv.style.display = 'block';
+    let uploaded = 0;
+    const total = files.length;
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const type = file.type.startsWith('video') ? 'video' : 'image';
+        const title = prompt(`عنوان ${type === 'video' ? 'فیلم' : 'عکس'} (${file.name}):`, file.name);
+        if (title === null) continue;
+        
+        try {
+            await saveMediaToDB(file, type, title);
+            uploaded++;
+            const percent = Math.round((uploaded / total) * 100);
+            progressFill.style.width = percent + '%';
+            progressText.textContent = `آپلود شده: ${uploaded} از ${total}`;
+        } catch (error) {
+            console.error('خطا در آپلود:', error);
+        }
+    }
+    
+    setTimeout(() => {
+        progressDiv.style.display = 'none';
+        progressFill.style.width = '0%';
+        loadMediaGallery();
+        alert(`✅ ${uploaded} فایل با موفقیت آپلود شد!`);
+    }, 500);
+}
+
+// ===== بارگذاری گالری =====
+async function loadMediaGallery() {
+    const grid = document.getElementById('mediaGrid');
+    if (!grid) return;
+    
+    try {
+        const mediaItems = await getAllMedia();
+        if (mediaItems.length === 0) {
+            grid.innerHTML = '<p style="color:#888;grid-column:1/-1;">هیچ عکس یا فیلمی آپلود نشده است.</p>';
+            return;
+        }
+        
+        grid.innerHTML = mediaItems.map(item => `
+            <div class="media-item">
+                ${item.type === 'video' ? `
+                    <video src="${item.data}" style="width:100%;height:200px;object-fit:cover;" controls></video>
+                ` : `
+                    <img src="${item.data}" alt="${item.title}" style="width:100%;height:200px;object-fit:cover;">
+                `}
+                <div style="padding:0.8rem;display:flex;justify-content:space-between;align-items:center;background:white;">
+                    <span style="font-weight:700;font-size:0.9rem;">${item.title}</span>
+                    <button onclick="deleteMedia(${item.id})" class="btn-delete" style="padding:5px 10px;">🗑️</button>
+                </div>
+                <div style="padding:0 0.8rem 0.8rem;font-size:0.8rem;color:#888;">
+                    ${item.type === 'video' ? '🎬' : '🖼️'} ${new Date(item.date).toLocaleDateString('fa-IR')}
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('خطا در بارگذاری گالری:', error);
+        grid.innerHTML = '<p style="color:#e74c3c;grid-column:1/-1;">خطا در بارگذاری گالری</p>';
+    }
+}
+
+// ===== حذف رسانه =====
+async function deleteMedia(id) {
+    if (!confirm('آیا از حذف این فایل مطمئن هستید؟')) return;
+    try {
+        await deleteMediaFromDB(id);
+        loadMediaGallery();
+    } catch (error) {
+        console.error('خطا در حذف:', error);
+        alert('خطا در حذف فایل');
+    }
 }
 
 // ===== تخفیف‌ها =====
@@ -296,4 +488,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (tab) renderPage(tab);
         });
     });
+    
+    // راه‌اندازی آپلود بعد از رندر شدن
+    setTimeout(() => {
+        setupUploadHandlers();
+    }, 500);
 });
