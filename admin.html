@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل ادمین - آکادمی ملیکا</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ===== صفحه ورود ادمین ===== -->
+    <div id="loginAdmin" class="login-admin">
+        <div class="login-box">
+            <div class="login-icon">👑</div>
+            <h2>ورود به پنل ادمین</h2>
+            <p>آکادمی ملیکا زیبادل</p>
+            <form id="adminLoginForm">
+                <input type="text" placeholder="نام کاربری" id="adminUser" required>
+                <input type="password" placeholder="رمز عبور" id="adminPass" required>
+                <button type="submit" class="btn-primary">ورود به پنل</button>
+            </form>
+            <div id="loginError" style="color: #e74c3c; margin-top: 1rem; display: none;">❌ نام کاربری یا رمز اشتباه است!</div>
+        </div>
+    </div>
+
+    <!-- ===== پنل ادمین ===== -->
+    <div id="adminPanel" style="display: none;">
+        <div class="admin-container">
+            <aside class="sidebar">
+                <div class="logo">
+                    <h2>👑 پنل ادمین</h2>
+                    <p>ملیکا زیبادل</p>
+                </div>
+                <nav>
+                    <ul>
+                        <li class="active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> <span>داشبورد</span></li>
+                        <li data-tab="users"><i class="fas fa-users"></i> <span>کاربران</span></li>
+                        <li data-tab="numbers"><i class="fas fa-phone"></i> <span>شماره‌ها</span></li>
+                        <li data-tab="contacts"><i class="fas fa-envelope"></i> <span>پیام‌ها</span></li>
+                        <li data-tab="reservations"><i class="fas fa-calendar-check"></i> <span>رزروها</span></li>
+                        <li data-tab="media"><i class="fas fa-photo-video"></i> <span>رسانه</span></li>
+                        <li data-tab="discounts"><i class="fas fa-percent"></i> <span>تخفیف‌ها</span></li>
+                    </ul>
+                </nav>
+                <button onclick="adminLogout()" class="btn-logout-side"><i class="fas fa-sign-out-alt"></i> خروج</button>
+            </aside>
+            
+            <main class="admin-main">
+                <header>
+                    <h1 id="pageTitle">📊 داشبورد</h1>
+                    <div class="admin-info">
+                        <span>👋 خوش آمدید، ادمین</span>
+                    </div>
+                </header>
+                
+                <div class="content" id="adminContent"></div>
+            </main>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
