@@ -220,7 +220,7 @@ table tr:hover { background: #faf0f5; }
 .status-confirmed { background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
 .status-cancelled { background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
 
-/* ===== بخش آپلود ===== */
+/* ===== بخش آپلود رسانه ===== */
 .media-upload-section {
     background: white;
     border-radius: 20px;
@@ -244,12 +244,34 @@ table tr:hover { background: #faf0f5; }
 
 .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
 
+/* ===== گالری رسانه ===== */
+.media-gallery { margin-top: 2rem; }
+.media-item {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+    background: white;
+}
+.media-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.media-item img, .media-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #faf0f5;
+}
+
+/* ===== ریسپانسیو ===== */
 @media (max-width: 768px) {
     .sidebar { width: 70px; padding: 1rem 0.5rem; }
     .sidebar .logo h2, .sidebar .logo p, .sidebar nav li span, .btn-logout-side span { display: none; }
     .sidebar nav li { justify-content: center; padding: 14px; }
     .admin-main { margin-right: 70px; padding: 1rem; }
     .dashboard-grid { grid-template-columns: 1fr 1fr; }
+    #mediaGrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; }
 }
 @media (max-width: 480px) {
     .dashboard-grid { grid-template-columns: 1fr; }
